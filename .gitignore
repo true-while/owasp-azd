@@ -1,0 +1,4 @@
+.azure
+.vs
+*.zip
+infra/ExportedTemplate-owasp/*

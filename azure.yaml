@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: owasp
+metadata:
+  template: tdd-azdowasp@1.0.0
+infra:
+   provider: "bicep"
+
