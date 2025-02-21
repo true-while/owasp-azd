@@ -65,3 +65,6 @@ resource workspaceName_Heartbeat 'Microsoft.OperationalInsights/workspaces/table
     WaitSection
   ]
 }
+
+
+output WORKSPACE_ID string = workspace.id

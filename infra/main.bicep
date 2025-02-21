@@ -1,22 +1,24 @@
 targetScope = 'subscription'
 
 @minLength(1)
-@maxLength(64)
+@maxLength(15)
 @description('Name of the environment that can be used as part of naming resource convention')
 param environmentName string
 
-param wspName string = ''
+
+@description('The name of the web Virtual Machine Admin User')
+param vmAdminUser string ='azd-admin'
+
+@secure()
+param vmAdminPass string = newGuid()
 
 @minLength(1)
 @description('Primary location for all resources')
 param location string
 
+@description('The current user id. Will be supplied by azd')
+param currentUserId string = newGuid()
 
-// Tags that should be applied to all resources.
-// 
-// Note that 'azd-service-name' tags should be applied separately to service host resources.
-// Example usage:
-//   tags: union(tags, { 'azd-service-name': <service name in azure.yaml> })
 var tags = {
   'azd-env-name': environmentName
 }
@@ -30,12 +32,58 @@ resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   tags: tags
 }
 
-
-module owasp 'workspacedeploy.bicep' = {
+@description('Monitoring workspace')
+module wrks 'workspacedeploy.bicep' = {
   scope: rg
   name: 'workspacedeploy'
   params: {
-    workspaceName: !empty(wspName) ? wspName : '${abbrs.eventHubNamespaces}${resourceToken}'
+    workspaceName: '${abbrs.networkVirtualNetworks}${resourceToken}'
+    location: location
+  }
+}
+
+
+@description('the vault used to store vm passwords')
+#disable-next-line secure-secrets-in-params - Individual secrets are marked
+module vault 'br/public:avm/res/key-vault/vault:0.11.1' = {
+  scope: rg
+  name: 'vaultDeployment'
+  params: {
+    name: '${abbrs.keyVaultVaults}${environmentName}'
+    enablePurgeProtection: false
+    location: rg.location
+    tags: tags
+    diagnosticSettings: [
+      {
+        workspaceResourceId: wrks.outputs.WORKSPACE_ID
+      }
+    ]
+    secrets: [
+      {
+        name: 'vmAdminPass'
+        value: vmAdminPass
+      }
+    ]
+    roleAssignments: [
+      {
+        roleDefinitionIdOrName: 'Key Vault Secrets Officer'
+        principalId: currentUserId
+      }
+    ]
+  }
+}
+
+
+
+@description('VNet with VMs')
+module vent 'vnet.bicep' = {
+  scope: rg
+  name: 'vnet'
+  params: {
+    envName: environmentName
+    Workspaceid: wrks.outputs.WORKSPACE_ID
+    DefaultPassword: vmAdminPass
+    DefaultUserName: vmAdminUser
     location: location
   }
 }

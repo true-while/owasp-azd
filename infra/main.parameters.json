@@ -8,7 +8,7 @@
       "location": {
         "value": "${AZURE_LOCATION}"
       },      
-      "principalId": {
+      "currentUserId": {
         "value": "${AZURE_PRINCIPAL_ID}"
     }
     }
