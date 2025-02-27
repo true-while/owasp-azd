@@ -14,10 +14,11 @@ param DefaultPassword string = ''
 @description('Provide the workspace ID')
 param Workspaceid string
 
-var VN_Name1 = 'VN-HUB${envName}'
-var VN_Name2 = 'VN-SPOKE1${envName}'
-var VN_Name3 = 'VN-SPOKE2${envName}'
+var VN_Name1 = 'VN-HUB-${envName}'
+var VN_Name2 = 'VN-SPOKE1-${envName}'
+var VN_Name3 = 'VN-SPOKE2-${envName}'
 var DDosPLanName = 'ddos-${envName}'
+var bastionHostName = 'b-${envName}'
 var VN_Name1Prefix = '10.0.25.0/24'
 var VN_Name1Subnet1Name = 'AGWAFSubnet'
 var VN_Name1Subnet1Prefix = '10.0.25.64/26'
@@ -53,9 +54,9 @@ var Subnet_serviceEndpoints = [
     service: 'Microsoft.AzureActiveDirectory'
   }
 ]
-var publicIpAddressName1 = 'SOCNSFWPIP${envName}'
-var publicIpAddressName2 = 'SOCNSAGPIP${envName}'
-var FW_Name = 'SOC-NS-FW${envName}'
+var publicIpAddressName1 = 'SOCNSFWPIP-${envName}'
+var publicIpAddressName2 = 'SOCNSAGPIP-${envName}'
+var FW_Name = 'SOC-NS-FW-${envName}'
 var firewallPolicyName = 'SOC-NS-FWPolicy'
 var AppGatewayPolicyName = 'SOC-NS-AGPolicy'
 var FrontdoorPolicyName = 'SOCNSFDPolicy'
@@ -66,7 +67,7 @@ var RT_Name1 = 'SOC-NS-DEFAULT-ROUTE'
 var NSG_Name1 = 'SOC-NS-NSG-SPOKE1'
 var NSG_Name2 = 'SOC-NS-NSG-SPOKE2'
 var Site_Name1 = 'owaspdirect-${uniqueString(resourceGroup().id)}'
-var Site_HPN_var = 'OWASP-ASP${envName}'
+var Site_HPN_var = 'OWASP-ASP-${envName}'
 var NIC_Name1 = 'Nic1'
 var NIC_Name2 = 'Nic2'
 var NIC_Name3 = 'Nic3'
@@ -362,6 +363,8 @@ resource VN_Name1_VN_Name1Subnet1 'Microsoft.Network/virtualNetworks/subnets@202
     serviceEndpoints: Subnet_serviceEndpoints
   }
 }
+
+
 
 resource VN_Name1_VN_Name1Subnet2 'Microsoft.Network/virtualNetworks/subnets@2020-03-01' = {
   parent: VN_1
@@ -1191,9 +1194,6 @@ resource FrontDoorName_microsoft_insights_FrontDoorDiagnostics 'microsoft.insigh
       }
     ]
   }
-  dependsOn:  [
-    FrontdoorPolicy
-  ]
 }
 
 resource RT_1 'Microsoft.Network/routeTables@2019-02-01' = {
@@ -1519,3 +1519,9 @@ resource VM_3 'Microsoft.Compute/virtualMachines@2019-07-01' = {
     licenseType: 'Windows_Server'
   }
 }
+
+
+output HUBVNET_ID string = VN_1.id
+
+
+

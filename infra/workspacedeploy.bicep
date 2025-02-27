@@ -46,7 +46,7 @@ resource WaitSection 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   location: location
   properties: {
     azPowerShellVersion: '3.0'
-    scriptContent: 'start-sleep -Seconds 300'
+    scriptContent: 'start-sleep -Seconds 200'
     cleanupPreference: 'Always'
     retentionInterval: 'PT1H'
   }

@@ -49,9 +49,9 @@ module vault 'br/public:avm/res/key-vault/vault:0.11.1' = {
   scope: rg
   name: 'vaultDeployment'
   params: {
-    name: '${abbrs.keyVaultVaults}${environmentName}'
+    name: '${abbrs.keyVaultVaults}${uniqueString(environmentName)}'
     enablePurgeProtection: false
-    location: rg.location
+    location: location
     tags: tags
     diagnosticSettings: [
       {
@@ -74,7 +74,6 @@ module vault 'br/public:avm/res/key-vault/vault:0.11.1' = {
 }
 
 
-
 @description('VNet with VMs')
 module vent 'vnet.bicep' = {
   scope: rg
@@ -84,6 +83,18 @@ module vent 'vnet.bicep' = {
     Workspaceid: wrks.outputs.WORKSPACE_ID
     DefaultPassword: vmAdminPass
     DefaultUserName: vmAdminUser
+    location: location
+  }
+}
+
+
+@description('Bastion')
+module bastion 'bastion.bicep' = {
+  scope: rg
+  name: 'bastion'
+  params: {
+    environmentName: environmentName
+    vnetID: vent.outputs.HUBVNET_ID
     location: location
   }
 }
