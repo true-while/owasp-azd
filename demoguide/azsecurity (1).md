@@ -309,33 +309,43 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 ## Scenario: Block request from Internet Explorer 11
 
-1. Open Internet Explorer 11 on your windows PC or Virtual windows desktop and browse to %PublicIPofSOC-NS-AG-WAFv2%.
+1. From `Win2019` VM open *Internet Explorer 11* browse to `bing.com`
 
-2. You will get 403 Forbidden URL as there is a custom rule (BlockInternetExplorer11) configured in WAF policy to look for Internet Explorer User agent and block the request.
+2. You will get 403 Forbidden URL as there is a custom rule (**BlockInternetExplorer11**) configured in WAF policy to look for Internet Explorer User agent and block the request.
+
+<img src="../demoguide/img/bing.png" title="Internet Explorer 11" style="width:50%" >
+<br></br>
 
 
 ## Scenario: SQL injection attack
 
 ### Successful SQLI attack connecting directly to the Web application
 
-1. Open browser on your client machine and browse to <https://owaspdirect-%uniqueid%/#/>
 
-2. Once the website is loaded, click on account and then login
+1. Open Azure portal in browser on your client machine and search for **owaspdirect**
 
-3. In Login page for username \' or 1=1\-- and for password, you can use anything.
+2. Once the web app found click on brows to load the page. THen click on `account` and then `login`
 
+3. In Login page for username **\' or 1=1\--** and for password, you can use anything.
+ 
 4. You can see a successful SQL injection attack as you get logged in by admin user.
+
+<img src="../demoguide/img/sqli-sucsss.png" title="Internet Explorer 11" style="width:50%" >
+<br></br>
 
 ### SQLI attack protection by Web Application Firewall on Application Gateway
 
-1. Open browser on your client machine and browse to <http://%PublicIPofSOC-NS-AG-WAFv2%>
+1. Open browser on your client machine and search for App Gateway **SOC-NS-AG-WAFv2**. When its located find out is private IP (eg 10.0.25.70).
 
-2. Once the website is loaded, click on account and then login
+2. From one of the provisioned VM open IP in browser. When website is loaded, click on `account` and then `login`
 
-3. In Login page for username \' or 1=1\-- and for password, you can use anything.
+3. In Login page for username **\' or 1=1\--** and for password, you can use anything.
 
 4. Once you hit login, you will see 403 Forbidden from Application gateway as WAF detected and denied the SQL injection attack
 
+
+<img src="../demoguide/img/sqli-fail.png" title="Internet Explorer 11" style="width:40%" >
+<br></br>
 
 ## Diagnostic setting and logging of Application gateway WAF
 
