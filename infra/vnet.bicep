@@ -1522,6 +1522,7 @@ resource VM_3 'Microsoft.Compute/virtualMachines@2019-07-01' = {
 
 
 output HUBVNET_ID string = VN_1.id
-
+output SPOKE1VNET_ID string = VN_2.id
+output SPOKE2VNET_ID string = VN_3.id
 
 

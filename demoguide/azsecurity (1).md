@@ -114,25 +114,17 @@ The same can be explained for **Outbound Connectivity**. For outbound connectivi
 
 2. On `VM-Win2019` blade, under `Connect` option, select `Connect via Bastion`.
 
-3. Fill in username `azd-admin` and select password from keyvault to login on `VM-Win2019`.
+3. Fill in username `azd-admin` and select password from key vault to login on `VM-Win2019`.
 
 <img src="../demoguide/img/bastion-connect.png" title="FW Rules" style="width:80%">
 <br></br>
 
-<div style="background: red; 
-            font-size: 14px; 
-            color: black;
-            padding: 5px; 
-            border: 1px solid lightgray; 
-            margin: 5px;">
+4. Add a dummy record to the hosts file on the VM. Add flowing line `1.2.3.4 testmaliciousdomain.eastus.cloudapp.azure.com` to the `C:\Windows\System32\drivers\etc\hosts` file.
 
-**CAUTION:** Do not open this site on your local Microsoft Corp device, it will flag suspicious activity on your device and you will make friends with our internal Cyber Defense Operations Center!
-</div>
+5. Now you can request `testmaliciousdomain.eastus.cloudapp.azure.com` from browser and watch the thread intel response.
 
-4. Once logged in **VM-Win2019**, open browser and browse to <http://www.azureadsec.com/>.
-
-5. You will then see the message that threat intel has blocked the request.
-    HTTP  request from 10.0.27.4:61992 to testmaliciousdomain.eastus.cloudapp.azure.com:80. Action: Deny. ThreatIntel: This is a test indicator for a Microsoft owned domain.
+<img src="../demoguide/img/intel.png" title="Intel response" style="width:75%">
+<br></br>
 
 
 ## Scenario: Controlling Access between Spoke Vnets (Network Rule)
@@ -140,19 +132,24 @@ The same can be explained for **Outbound Connectivity**. For outbound connectivi
 Any TCP/UDP/ICMP traffic that will be allowed to flow through the firewall require a network rule.
 For example, if you have one subnet with web servers that must talk to a File Server in another subnet, then you need a network rule to allow TCP 445 from the source subnet to the destination subnet.
 
-1. Go to your resource group **MTTDemoDeployRGc%youralias%AZSEC**.
+1. Go to your provisioned resource group.
 
-2. Search for Virtual Machines and select VM-Win2019.
+2. Search for Virtual Machines and select **VM-Win2019**.
 
-3. On VM-Win2019 blade, under Operations, select Bastion.
+3. On **VM-Win2019** blade, under `Operations`, select `Bastion`.
 
-4. Fill in username and password to login on VM-Win2019, these are provided in the **success deployment e-mail** your recieved from MTT Demo Deploy.
+4. Fill in username (azd-admin) and password (from key vault) to login on **VM-Win2019**.
 
-5. Now open command prompt and try pinging the VM-Win11 (10.0.27.4).
+5. Now open command prompt and try pinging the **VM-Win11** (10.0.27.4).
 
-6. You will see request time out as VM-Win11 is on a different VNet and there is no network rule on Azure firewall to allow ICMP traffic.
+6. You will see **request time out** as `VM-Win11` is on a different VNet and there is no network rule on Azure firewall to allow ICMP traffic.
 
-7. Now try RDP to VM-Win11 and that will succeed as there is a network rule which allow RDP traffic to VM-Win11.
+7. Now try RDP to `VM-Win11` and that will succeed as there is a network rule which allow RDP traffic to `VM-Win11`. You can pick password from key vault secret with name **vmAdminPass** by click on `Show secret value`.
+
+8. Alternatively you can test it with **Network Watcher | Connection troubleshoot**. By selecting both of the provisioned VM and destination TCP port `3389`. Leave source port blank and start the test.
+
+<img src="../demoguide/img/connection-test.png" title="Network Watcher | Connection troubleshoot" >
+<br></br>
 
 ### Verify Firewall DNAT rule which allow the traffic (DNAT Rule)
 
@@ -161,78 +158,84 @@ DNAT rules implicitly add a corresponding network rule to allow the translated t
 Scenarios that you might consider are publishing SSH, RDP, or non-HTTP/S applications to the Internet.
 
 
-1. Go to your resource group **MTTDemoDeployRGc%youralias%AZSEC**.
+1. Go to your resource group.
 
 2. Search for Firewall Policy and select **SOC-NS-FWPolicy**.
 
-3. In left menu, under **Settings** and you would be able to see DNAT rules, Network rules and Application rules. Select **DNAT Rules**
+3. In left menu, under `Settings` and you would be able to see `DNAT rules`.
 
-4. In DNAT Rules, you will see four rules that allow incoming connections to the 3 Virtual Machines and the Web App, via Application Gateway.
+4. In `DNAT Rules`, you will see four rules that allow incoming connections to the 3 Virtual Machines and the Web App, via Application Gateway.
 
     a. APPGW-WEBAPP - Incoming rule 443 translated for 10.0.25.70 (AppGW)
 
     b. VM-Win11 - Incoming rule 33891 translated to 3389 for 10.0.27.4 (VM-Win11)
 
-    c. VM-Kali - Incoming rule 22 translated for 10.0.27.68 (VM-Kali)
+    c. VM-Win2019 - Incoming rule 33890 translated to 3389 for 10.0.28.4 (VM-Win2019)
 
-    d. VM-Win2019 - Incoming rule 33890 translated to 3389 for 10.0.28.4 (VM-Win2019)
+5. Open on of VM rule to observe configuration. You need pick up Pubic IP address of firewall. 
+
+<img src="../demoguide/img/dnat-ips.png" title="DNAT" style="width:75%">
+<br></br>
+
+5. Now you can test DNAT Rules from your local host by connecting to `VM-Win2019` on the port `33891` adn IP address picked above.
 
 
 ## Scenario: Secure internet access using Azure Firewall (Application Rule)
 
-1. Go to your resource group **MTTDemoDeployRGc%youralias%AZSEC**.
+1. Connect to `VM-Win2019` by using Bastion like explained above.
 
-2. Search for Virtual Machines and select VM-Win2019.
+2. In the browser, try browsing to [www.bing.com]( www.bing.com) and you can successfully load the page.
 
-3. On VM-Win2019 blade, under Operations, select Bastion.
+3. Now try browsing <http://www.microsoft.com/> and you will see a message that the request is denied by the azure firewall.
 
-4. Fill in username and password to login on VM-Win2019, these are provided in the **success deployment e-mail** your recieved from MTT Demo Deploy.
-
-5. In the browser, try browsing to [www.bing.com]( www.bing.com) and you can successfully load the page.
-
-7. Now try browsing <http://www.microsoft.com/> and you will see a message that the request is denied by the azure firewall.
-
-    *HTTP  request from 10.0.28.4:53955 to <https://www.microsoft.com:443>. Action: Deny. No rule matched. Proceeding with default action*
+<img src="../demoguide/img/apprules.png" title="Application Rule" style="width:50%">
+<br></br>
 
 
-### Verify Firewall Application rule which allow the traffic
+
+## Verify Firewall Application rule which allow the traffic
 
 Application rule deals with HTTP/S or SQL traffic at Layer-7 in the networking stack.
 For example, you can use FQDN TAGs to allow windows update from internal subnets.
 
+1. Search for Firewall Policy and select **SOC-NS-FWPolicy**.
 
-1. Go to your resource group **MTTDemoDeployRGc%youralias%AZSEC**.
+2. In left menu, under **Settings** and you would be able to see DNAT rules, Network rules and Application rules. Select **Application Rules**
 
-2. Search for Firewall Policy and select **SOC-NS-FWPolicy**.
+3. In Application rules, you will see the rule **SearchEngineAccess**
 
-3. In left menu, under **Settings** and you would be able to see DNAT rules, Network rules and Application rules. Select **Application Rules**
+4  Modify rule **SearchEngineAccess** by adding to the list `microsoft.com`
 
-4. In Application rules, you will see the rule **SearchEngineAccess**
+<img src="../demoguide/img/FQDN-list.png" title="FQDN List" style="width:40%">
+<br></br>
 
-    a. This rule allows access to a specific URLs: www.google.com,www.bing.com,google.com,bing.com.
-
+5. Now you save changes and test it from `VM-Win2019`
 
 
 ## Diagnostic setting and logging of Azure Firewall
 
-1. Go to your resource group **MTTDemoDeployRGc%youralias%AZSEC**.
+1. Go to your resource group.
 
-2. Search for Azure Firewall. and select **SOC-NS-FW**.
+2. Search for Azure Firewall. and select **SOC-NS-FW-yourenv**.
 
-3. In left Menu, under Monitoring, select diagnostic settings and **verify the settings**.
+3. In left Menu, under `Monitoring`, select `Diagnostic settings` and **edit settings** for `Diag service` rule.
 
 5. You will see that AzureFirewallApplicationRule and AzureFirewallNetworkRule log types were configured to be collected and forwarded to the %youralias%azsecworkspace Log Analytics workspace.
 
-6. Click on %youralias%azsecworkspace under Log Analytics Workspace which will open the Log analytics workspace blade for %youralias%azsecworkspace.
+<img src="../demoguide/img/firewalllogs.png" title="Log settings" style="width:75%">
+<br></br>
 
-7. In the left Menu, select **logs** and copy/paste the following query and click on **Run**.
+
+6. You can search for Log Analytics Workspace (LAW) name provided in the settings.
+
+7. When you open LAW in the left Menu, select `logs` and copy/paste the following query and click on `Run`.
 
     ```kusto
     AzureDiagnostics
     | where Category contains "AzureFirewallApplicationRule"
     ```
 
-8. This will show you all the logs related Application rules including web categories.
+8. This will show you all the logs related **Application rules** including web categories.
 
 9. Now in the query input box copy/paste the following query and click on **Run**.
 
@@ -243,47 +246,54 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 10. This will show you all the logs related to Network rules including Threat Intel Logs. Expand a log and you can see information about the request.
 
+<img src="../demoguide/img/law-q1.png" title="Log settings" style="width:50%">
+<br></br>
+
 
 ## Azure Firewall Workbook using Microsoft Sentinel
 
 1. You can use a workbook for Azure Firewall in Microsoft Sentinel. The Azure Firewall solution for Microsoft Sentinel enables ingestion of DNS Proxy, Application Rule and Network Rule logs from Azure Firewalls.
 
-2. Search for **Microsoft Sentinel** and create a new resource
+2. Search for **Microsoft Sentinel** and create a new resource.
 
-3. Select your %youralias%azsecworkspace Log Analytics Workspace and enable Microsoft Sentinel.
+3. Select your Log Analytics Workspace for your resource group and enable **Microsoft Sentinel.**
 
-4. Now in Microsoft Sentinel in the left Menu, under **Threat Management** select **Workbooks** and go to **Content Hub**.
+4. Now in Microsoft Sentinel in the left Menu, under `Threat Management` select `Workbooks` and go to `Content Hub`.
 
-5. You can search for the workbook called **Azure Firewall**. Select and Install.
+5. You can search for the workbooks called **Azure Firewall**. Select and `Install`.
 
-6. Click on View saved Workbook.
+6. Click on the works book and select `Save`. When it saved click on `View saved Workbook`.
 
 7. Click and open the workbook and you can visualize the firewall logs in dashboard.
 
-
+<img src="../demoguide/img/workbook.png" title="Log settings" >
+<br></br>
 
 
 # Explain Web Application Firewall with Application Gateway
 
 ## Application Gateway WAF policy
 
-1. Go to your resource group **MTTDemoDeployRGc%youralias%AZSEC**.
+1. Go to your resource group.
 
-2. Search for Web application firewall policies.
+2. Search for **WAF** (Web application firewall policies).
 
 3. In Web application firewall policies, select **SOC-NS-AGPolicy**.
 
-4. In the overview page, you will see the Policy mode set to **Prevention**.
+4. In the overview page, you will see the Policy mode set to `Prevention`.
 
-5. You will see that Mode is set to Prevention and there are no exclusions configured. Global parameters are also set to default.
+5. You will see that `Mode` is set to `Prevention` and there are no exclusions configured. Global parameters are also set to default.
 
-6. In Left Menu, click on **Managed rules** and you can see that we have OWASP_3.1 ruleset enabled.
+6. In Left Menu, click on `Managed rules` and you can see that we have OWASP_3.1 ruleset enabled.
 
 7. Click Expand and scroll through the rules.
 
 8. You will see Missing **User Agent Header** and **Host header** is a numeric IP address is disabled, this is just to show that you can disable individual rules if required.
 
-9. In Left Menu, click on Custom rules and you will see 3 rules.
+<img src="../demoguide/img/waf-ruleset.png" title="Ruleset" style="width:50%" >
+<br></br>
+
+9. In Left Menu, click on `Custom rules` and you will see 3 rules.
 
     a. Rule **SentinelBlockIP** is configured to block IP’s which are picked up by the Sentinel detection and response.
 
@@ -291,7 +301,11 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
     c. **BlockInternetExplorer11** rule is set to block a user-agent match in HTTP request to block request coming from Internet Explorer 11.
 
-10. In Left Menu, Click on Associated application gateways and you can see that this policy is associated to **SOC-NS-AG-WAFv2** application gateway.
+<img src="../demoguide/img/waf-custom.png" title="Custom rules" style="width:50%" >
+<br></br>
+
+
+10. In Left Menu, Click on `Associated application gateways` and you can see that this policy is associated to **SOC-NS-AG-WAFv2** application gateway.
 
 ## Scenario: Block request from Internet Explorer 11
 

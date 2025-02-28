@@ -94,7 +94,8 @@ module bastion 'bastion.bicep' = {
   name: 'bastion'
   params: {
     environmentName: environmentName
-    vnetID: vent.outputs.HUBVNET_ID
+    vnetID1: vent.outputs.SPOKE1VNET_ID
+    vnetID2: vent.outputs.SPOKE2VNET_ID
     location: location
   }
 }
