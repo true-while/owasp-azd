@@ -205,7 +205,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 4  Modify rule **SearchEngineAccess** by adding to the list `microsoft.com`
 
-<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/img/FQDN-list.png" title="FQDN List" style="width:40%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/FQDN-list.png" title="FQDN List" style="width:40%">
 <br></br>
 
 5. Now you save changes and test it from `VM-Win2019`
