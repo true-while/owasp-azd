@@ -2,7 +2,7 @@
 
 name: owasp
 metadata:
-  template: tdd-azdowasp@1.0.0
+  template: tdd-azdowasp@2.0.0
 infra:
    provider: "bicep"
 
