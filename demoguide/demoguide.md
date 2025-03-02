@@ -52,7 +52,7 @@ This scenario deploys **Azure Firewall, Front Door**, the sample **OWASP Juice S
 * SOC-NS-FWPolicy - Firewall Policy
 
 
-<img src="../demoguide/img/rg.png" title="RG schema" style="width:70%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/rg.png" title="RG schema" style="width:70%">
 <br></br>
 
 
@@ -85,7 +85,7 @@ The same can be explained for **Outbound Connectivity**. For outbound connectivi
 2. In left menu, select `Threat Intelligence` and you can see that Threat Intelligence Mode is set to `Alert and Deny`.
 
 
-<img src="../demoguide/img/threadmode.png" title="Thread mode" style="width:80%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/threadmode.png" title="Thread mode" style="width:80%">
 <br></br>
 
 3. In `Network Rules`, you will see three rules.
@@ -96,7 +96,7 @@ The same can be explained for **Outbound Connectivity**. For outbound connectivi
     c. SSH rule allows SSH(22) traffic from VM-Win11, VM-Kali to VM-Win2019
 
 
-<img src="../demoguide/img/rules-fwpolicy.png" title="FW Rules" style="width:80%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/rules-fwpolicy.png" title="FW Rules" style="width:80%">
 <br></br>
 
 4. In `Application rules`, you will see one rule.
@@ -105,7 +105,7 @@ The same can be explained for **Outbound Connectivity**. For outbound connectivi
 
 5. In left menu, click on `Secured virtual networks` and you can see that **VN-HUB** is configured and protected by Azure Firewall.
 
-<img src="../demoguide/img/secured-vnets.png" title="FW Rules" style="width:80%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/secured-vnets.png" title="FW Rules" style="width:80%">
 <br></br>
 
 
@@ -117,14 +117,14 @@ The same can be explained for **Outbound Connectivity**. For outbound connectivi
 
 3. Fill in username `azd-admin` and select password from key vault to login on `VM-Win2019`.
 
-<img src="../demoguide/img/bastion-connect.png" title="FW Rules" style="width:80%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/bastion-connect.png" title="FW Rules" style="width:80%">
 <br></br>
 
 4. Add a dummy record to the hosts file on the VM. Add flowing line `1.2.3.4 testmaliciousdomain.eastus.cloudapp.azure.com` to the `C:\Windows\System32\drivers\etc\hosts` file.
 
 5. Now you can request `testmaliciousdomain.eastus.cloudapp.azure.com` from browser and watch the thread intel response.
 
-<img src="../demoguide/img/intel.png" title="Intel response" style="width:75%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/intel.png" title="Intel response" style="width:75%">
 <br></br>
 
 
@@ -149,7 +149,7 @@ For example, if you have one subnet with web servers that must talk to a File Se
 
 8. Alternatively you can test it with **Network Watcher | Connection troubleshoot**. By selecting both of the provisioned VM and destination TCP port `3389`. Leave source port blank and start the test.
 
-<img src="../demoguide/img/connection-test.png" title="Network Watcher | Connection troubleshoot" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/connection-test.png" title="Network Watcher | Connection troubleshoot" >
 <br></br>
 
 ### Verify Firewall DNAT rule which allow the traffic (DNAT Rule)
@@ -175,7 +175,7 @@ Scenarios that you might consider are publishing SSH, RDP, or non-HTTP/S applica
 
 5. Open on of VM rule to observe configuration. You need pick up Pubic IP address of firewall. 
 
-<img src="../demoguide/img/dnat-ips.png" title="DNAT" style="width:75%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/dnat-ips.png" title="DNAT" style="width:75%">
 <br></br>
 
 5. Now you can test DNAT Rules from your local host by connecting to `VM-Win2019` on the port `33891` adn IP address picked above.
@@ -189,7 +189,7 @@ Scenarios that you might consider are publishing SSH, RDP, or non-HTTP/S applica
 
 3. Now try browsing <http://www.microsoft.com/> and you will see a message that the request is denied by the azure firewall.
 
-<img src="../demoguide/img/apprules.png" title="Application Rule" style="width:50%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/apprules.png" title="Application Rule" style="width:50%">
 <br></br>
 
 ### Verify Firewall Application rule which allow the traffic
@@ -205,7 +205,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 4  Modify rule **SearchEngineAccess** by adding to the list `microsoft.com`
 
-<img src="../demoguide/img/FQDN-list.png" title="FQDN List" style="width:40%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/img/FQDN-list.png" title="FQDN List" style="width:40%">
 <br></br>
 
 5. Now you save changes and test it from `VM-Win2019`
@@ -221,7 +221,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 5. You will see that AzureFirewallApplicationRule and AzureFirewallNetworkRule log types were configured to be collected and forwarded to the %youralias%azsecworkspace Log Analytics workspace.
 
-<img src="../demoguide/img/firewalllogs.png" title="Log settings" style="width:75%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/firewalllogs.png" title="Log settings" style="width:75%">
 <br></br>
 
 
@@ -245,7 +245,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 10. This will show you all the logs related to Network rules including Threat Intel Logs. Expand a log and you can see information about the request.
 
-<img src="../demoguide/img/law-q1.png" title="Log settings" style="width:50%">
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/law-q1.png" title="Log settings" style="width:50%">
 <br></br>
 
 
@@ -265,7 +265,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 7. Click and open the workbook and you can visualize the firewall logs in dashboard.
 
-<img src="../demoguide/img/workbook.png" title="Log settings" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/workbook.png" title="Log settings" >
 <br></br>
 
 
@@ -289,7 +289,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 8. You will see Missing **User Agent Header** and **Host header** is a numeric IP address is disabled, this is just to show that you can disable individual rules if required.
 
-<img src="../demoguide/img/waf-ruleset.png" title="Ruleset" style="width:50%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/waf-ruleset.png" title="Ruleset" style="width:50%" >
 <br></br>
 
 9. In Left Menu, click on `Custom rules` and you will see 3 rules.
@@ -300,7 +300,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
     c. **BlockInternetExplorer11** rule is set to block a user-agent match in HTTP request to block request coming from Internet Explorer 11.
 
-<img src="../demoguide/img/waf-custom.png" title="Custom rules" style="width:50%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/waf-custom.png" title="Custom rules" style="width:50%" >
 <br></br>
 
 
@@ -312,7 +312,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 
 2. You will get 403 Forbidden URL as there is a custom rule (**BlockInternetExplorer11**) configured in WAF policy to look for Internet Explorer User agent and block the request.
 
-<img src="../demoguide/img/bing.png" title="Internet Explorer 11" style="width:50%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/bing.png" title="Internet Explorer 11" style="width:50%" >
 <br></br>
 
 
@@ -329,7 +329,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
  
 4. You can see a successful SQL injection attack as you get logged in by admin user.
 
-<img src="../demoguide/img/sqli-sucsss.png" title="Internet Explorer 11" style="width:50%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/sqli-sucsss.png" title="Internet Explorer 11" style="width:50%" >
 <br></br>
 
 ### SQLI attack protection by Web Application Firewall on Application Gateway
@@ -343,7 +343,7 @@ For example, you can use FQDN TAGs to allow windows update from internal subnets
 4. Once you hit login, you will see 403 Forbidden from Application gateway as WAF detected and denied the SQL injection attack
 
 
-<img src="../demoguide/img/sqli-fail.png" title="Internet Explorer 11" style="width:40%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/sqli-fail.png" title="Internet Explorer 11" style="width:40%" >
 <br></br>
 
 ### Diagnostic setting and logging of Application gateway WAF
@@ -366,7 +366,7 @@ AzureDiagnostics
 ```
 7. This will show you all the logs related to Application gateway WAF.
 
-<img src="../demoguide/img/waflog.png" title="WAF Log" style="width:70%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/waflog.png" title="WAF Log" style="width:70%" >
 <br></br>
 
 ### Azure WAF Workbook using Microsoft Sentinel
@@ -381,7 +381,7 @@ AzureDiagnostics
 
 5. When installation complete select `Manage` and click on template `Microsoft Web Application Firewall (WAF) - Azure WAF` then click on `View Template`
 
-<img src="../demoguide/img/wafworkbook.png" title="WAF Log" style="width:70%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/wafworkbook.png" title="WAF Log" style="width:70%" >
 <br></br>
 
 
@@ -412,7 +412,7 @@ AzureDiagnostics
     c. **RatelimitRequest** rule is set to ratelimit and doing string match in URI to ratelimit request where keyword **Search** is in the URI.
 
 
-<img src="../demoguide/img/frontdoor-custom.png" title="WAF Log" style="width:70%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/frontdoor-custom.png" title="WAF Log" style="width:70%" >
 <br></br>
 
 
@@ -429,7 +429,7 @@ AzureDiagnostics
 
 2. You will see that you get redirected to Edge browser download URL as there is a custom rule (`RedirectInternetExplorerUserAgent`) configured in WAF policy to look for IE 11 agent 'rc:11.0 and redirect to **Edge browser** download URL.
 
-<img src="../demoguide/img/dwnedge.png" title="Use edge" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/dwnedge.png" title="Use edge" >
 <br></br>
 
 
@@ -441,13 +441,13 @@ AzureDiagnostics
 
 3. Type in any keyword and you will see a response from the website.
 
-<img src="../demoguide/img/goodsearch.png" title="Good" style="width:50%"  >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/goodsearch.png" title="Good" style="width:50%"  >
 <br></br>
 
 
 4. Try refresh in browser to do the same search again and now you will not see any response message in the website as you saw previously.
 
-<img src="../demoguide/img/nogoodsearch.png" title="No good" style="width:50%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/nogoodsearch.png" title="No good" style="width:50%" >
 <br></br>
 
 5. RateLimit rule is set to only allow 1 request for search in 1 minute. So you should be able to repro it easily.
@@ -466,7 +466,7 @@ AzureDiagnostics
 
 5. RatelimitRequest rule is set to ratelimit and doing string match in URI to ratelimit request where keyword **Search** is in the URI.
 
-<img src="../demoguide/img/customsearch.png" title="Policy" style="width:50%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/customsearch.png" title="Policy" style="width:50%" >
 <br></br>
 
 ### Diagnostic setting and logging of Azure Front Door WAF
@@ -488,7 +488,7 @@ AzureDiagnostics
 
 8. This will show you all the logs related to Front door’s WAF.
 
-<img src="../demoguide/img/kustolog.png" title="Policy" style="width:70%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/kustolog.png" title="Policy" style="width:70%" >
 <br></br>
 
 
@@ -506,7 +506,7 @@ AzureDiagnostics
 
 7. Click and open the workbook and you can visualize the Azure WAF logs in dashboard.
 
-<img src="../demoguide/img/wafworkbook2.png" title="Workbook" style="width:70%" >
+<img src="https://raw.githubusercontent.com/true-while/owasp-azd/refs/heads/main/demoguide/img/wafworkbook2.png" title="Workbook" style="width:70%" >
 <br></br>
 
 
