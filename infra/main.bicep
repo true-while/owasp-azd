@@ -87,6 +87,16 @@ module vent 'vnet.bicep' = {
   }
 }
 
+@description('Front Door')
+module fdoor 'fdoor.bicep' = {
+  scope: rg
+  name: 'fdoor'
+  params: {
+    FrontdoorPolicyName: 'SOCNSFDPolicy'
+    publicIpAddress: vent.outputs.AG_PIP
+  }
+}
+
 
 @description('Bastion')
 module bastion 'bastion.bicep' = {

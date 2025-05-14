@@ -59,10 +59,9 @@ var publicIpAddressName2 = 'SOCNSAGPIP-${envName}'
 var FW_Name = 'SOC-NS-FW-${envName}'
 var firewallPolicyName = 'SOC-NS-FWPolicy'
 var AppGatewayPolicyName = 'SOC-NS-AGPolicy'
-var FrontdoorPolicyName = 'SOCNSFDPolicy'
 var AG_Name = 'SOC-NS-AG-WAFv2'
 var AppGateway_IPAddress = '10.0.25.70'
-var FrontDoorName = 'Demowasp-${uniqueString(resourceGroup().id)}'
+
 var RT_Name1 = 'SOC-NS-DEFAULT-ROUTE'
 var NSG_Name1 = 'SOC-NS-NSG-SPOKE1'
 var NSG_Name2 = 'SOC-NS-NSG-SPOKE2'
@@ -985,217 +984,6 @@ resource firewallPolicyName_DefaultApplicationRuleCollectionGroup 'Microsoft.Net
   ]
 }
 
-
-
-resource FrontDoor 'Microsoft.Network/frontdoors@2019-04-01' = {
-  name: FrontDoorName
-  location: 'global'
-  tags: {}
-  properties: {
-    friendlyName: FrontDoorName
-    enabledState: 'Enabled'
-    healthProbeSettings: [
-      {
-        name: 'healthProbeSettings1'
-        properties: {
-          path: '/'
-          protocol: 'Http'
-          intervalInSeconds: 30
-        }
-      }
-    ]
-    loadBalancingSettings: [
-      {
-        name: 'loadBalancingSettings1'
-        properties: {
-          sampleSize: 4
-          successfulSamplesRequired: 2
-        }
-      }
-    ]
-    frontendEndpoints: [
-      {
-        name: '${FrontDoorName}-azurefd-net'
-        properties: {
-          hostName: '${FrontDoorName}.azurefd.net'
-          sessionAffinityEnabledState: 'Disabled'
-          sessionAffinityTtlSeconds: 0
-          webApplicationFirewallPolicyLink: {
-            id: FrontdoorPolicy.id 
-          }
-        }
-      }
-    ]
-    backendPools: [
-      {
-        name: 'OWASP'
-        properties: {
-          backends: [
-            {
-              address: publicIpAddress2.properties.ipAddress
-              enabledState: 'Enabled'
-              httpPort: 80
-              httpsPort: 443
-              priority: 1
-              weight: 50
-              backendHostHeader: publicIpAddress2.properties.ipAddress
-            }
-          ]
-          loadBalancingSettings: {
-            id: resourceId(
-              'Microsoft.Network/frontDoors/loadBalancingSettings',
-              FrontDoorName,
-              'loadBalancingSettings1'
-            )
-          }
-          healthProbeSettings: {
-            id: resourceId('Microsoft.Network/frontDoors/healthProbeSettings', FrontDoorName, 'healthProbeSettings1')
-          }
-        }
-      }
-    ]
-    routingRules: [
-      {
-        name: 'AppGW'
-        properties: {
-          frontendEndpoints: [
-            {
-              id: resourceId('Microsoft.Network/frontDoors/frontEndEndpoints', FrontDoorName, '${FrontDoorName}-azurefd-net')
-            }
-          ]
-          acceptedProtocols: [
-            'Http'
-            'Https'
-          ]
-          patternsToMatch: [
-            '/*'
-          ]
-          enabledState: 'Enabled'
-          routeConfiguration: {
-            '@odata.type': '#Microsoft.Azure.FrontDoor.Models.FrontdoorForwardingConfiguration'
-            forwardingProtocol: 'HttpOnly'
-            backendPool: {
-              id: resourceId('Microsoft.Network/frontDoors/backendPools', FrontDoorName, 'OWASP')
-            }
-          }
-        }
-      }
-    ]
-  }
-}
-
-resource FrontdoorPolicy 'Microsoft.Network/frontdoorwebapplicationfirewallpolicies@2019-10-01' = {
-  name: FrontdoorPolicyName
-  location: 'Global'
-  properties: {
-    policySettings: {
-      enabledState: 'Enabled'
-      mode: 'Prevention'
-      redirectUrl: 'https://www.microsoft.com/en-us/edge'
-      customBlockResponseStatusCode: 403
-      customBlockResponseBody: 'QmxvY2tlZCBieSBmcm9udCBkb29yIFdBRg=='
-    }
-    customRules: {
-      rules: [
-        {
-          name: 'BlockGeoLocationChina'
-          enabledState: 'Enabled'
-          priority: 10
-          ruleType: 'MatchRule'
-          rateLimitDurationInMinutes: 1
-          rateLimitThreshold: 100
-          matchConditions: [
-            {
-              matchVariable: 'RemoteAddr'
-              operator: 'GeoMatch'
-              negateCondition: false
-              matchValue: [
-                'CN'
-              ]
-              transforms: []
-            }
-          ]
-          action: 'Block'
-        }
-        {
-          name: 'RedirectInternetExplorerUserAgent'
-          enabledState: 'Enabled'
-          priority: 20
-          ruleType: 'MatchRule'
-          rateLimitDurationInMinutes: 1
-          rateLimitThreshold: 100
-          matchConditions: [
-            {
-              matchVariable: 'RequestHeader'
-              selector: 'User-Agent'
-              operator: 'Contains'
-              negateCondition: false
-              matchValue: [
-                'rv:11.0'
-              ]
-              transforms: []
-            }
-          ]
-          action: 'Redirect'
-        }
-        {
-          name: 'RateLimitRequest'
-          enabledState: 'Enabled'
-          priority: 30
-          ruleType: 'RateLimitRule'
-          rateLimitDurationInMinutes: 1
-          rateLimitThreshold: 1
-          matchConditions: [
-            {
-              matchVariable: 'RequestUri'
-              operator: 'Contains'
-              negateCondition: false
-              matchValue: [
-                'search'
-              ]
-              transforms: []
-            }
-          ]
-          action: 'Block'
-        }
-      ]
-    }
-    managedRules: {
-      managedRuleSets: [
-        {
-          ruleSetType: 'Microsoft_DefaultRuleSet'
-          ruleSetVersion: '1.1'
-        }
-        {
-          ruleSetType: 'Microsoft_BotManagerRuleSet'
-          ruleSetVersion: '1.0'
-          ruleGroupOverrides: []
-          exclusions: []
-        }
-      ]
-    }
-  }
-}
-
-resource FrontDoorName_microsoft_insights_FrontDoorDiagnostics 'microsoft.insights/diagnosticSettings@2017-05-01-preview' = {
-  name: 'DiagService'
-  scope: FrontDoor
-  properties: {
-    
-    workspaceId: Workspaceid
-    logs: [
-      {
-        category: 'FrontdoorAccessLog'
-        enabled: true
-      }
-      {
-        category: 'FrontdoorWebApplicationFirewallLog'
-        enabled: true
-      }
-    ]
-  }
-}
-
 resource RT_1 'Microsoft.Network/routeTables@2019-02-01' = {
   name: RT_Name1
   location: location
@@ -1524,5 +1312,6 @@ resource VM_3 'Microsoft.Compute/virtualMachines@2019-07-01' = {
 output HUBVNET_ID string = VN_1.id
 output SPOKE1VNET_ID string = VN_2.id
 output SPOKE2VNET_ID string = VN_3.id
+output AG_PIP string = publicIpAddress2.properties.ipAddress
 
 
